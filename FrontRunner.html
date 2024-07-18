@@ -21,7 +21,7 @@
   </style>
 </head>
 <body>
-<canvas width="375" height="667" id="game"></canvas>
+<canvas width="320" height="480" id="game"></canvas>
 <script>
 const canvas = document.getElementById('game');
 const context = canvas.getContext('2d')
@@ -30,8 +30,11 @@ context.font = "30px Arial";
 context.textAlign = "center";
 context.fillStyle = 'blue';
 
-let barrierX = [54, 107, 160, 213, 1, 54, 213, 266, 54, 213, 1, 54, 107, 160, 213, 266, 54, 107, 213, 160, 213, 107, 160, 1, 54, 213, 266, 54, 213, 107, 160, 1, 266, 1, 266];
+let barrierX = [54, 107, 160, 213, 1, 54, 213, 266, 54, 213, 1, 54, 107, 160, 213, 266, 54, 107, 160, 213, 107, 160, 1, 54, 213, 266, 54, 213, 107, 160, 1, 266, 1, 266];
 let barrierY = [-1057, -1057, -1057, -1057, -951, -951, -951, -951, -845, -845, -368, -368, -368, -368, -368, -368, -262, -262, -262, -262, -156, -156, -50, -50, -50, -50, 56, 56, 162, 162, 268, 268, 321, 321];
+
+let squareSize = 53;
+let wallHeight = 15;
 
 let upWallX = [1, 266, 160, 213, 1, 54, 1, 266];
 let upWallY = [-633, -633, -580, -580, -474, -474, 427, 427];
@@ -39,9 +42,39 @@ let upWallY = [-633, -633, -580, -580, -474, -474, 427, 427];
 let downWallX = [1, 266, 1, 266, 107, 160, 213, 266, 54, 107, 1, 266, 1, 266];
 let downWallY = [-1019, -1019, -807, -807, -701, -701, -595, -595, -489, -489, -436, -436, 465, 465];
 
+let barriers = [{x:barrierX[0], y:barrierY[0], activ:true}];
+let upWalls = [{x:upWallX[0], y:upWallY[0]}];
+let downWalls = [{x:downWallX[0], y:downWallY[0]}];
+
+for (let i = 1; i < barrierX.length; i++) {
+  barriers.push({x:barrierX[i], y:barrierY[i], activ:true})
+}
+for (let i = 1; i < upWallX.length; i++) {
+  upWalls.push({x:upWallX[i], y:upWallY[i]})
+}
+for (let i = 1; i < downWallX.length; i++) {
+  downWalls.push({x:downWallX[i], y:downWallY[i]})
+}
+
+let barrierImage = new Image(53, 53);
+barrierImage.src = "barrier.png";
+let wallImage = new Image(53, 15);
+wallImage.src = "wall.png";
+
 function loop() {
   requestAnimationFrame(loop);
   context.clearRect(0,0,canvas.width,canvas.height);
+  barriers.forEach(function(barrier) {
+    if (barrier.activ) {
+      context.drawImage(barrierImage, 0, 0, squareSize, squareSize, barrier.x, barrier.y, squareSize, squareSize);
+    }
+  });
+  upWalls.forEach(function(upWall) {
+    context.drawImage(wallImage, 0, 0, squareSize, wallHeight, upWall.x, upWall.y, squareSize, wallHeight);
+  });
+  downWalls.forEach(function(downWall) {
+    context.drawImage(wallImage, 0, 0, squareSize, wallHeight, downWall.x, downWall.y, squareSize, wallHeight);
+  });
 }
 
 document.addEventListener('mouseup', function(e) {
