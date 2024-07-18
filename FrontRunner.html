@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DragTheEnemyAway</title>
+  <meta charset="UTF-8">
+  <style>
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  canvas {
+    border: 1px solid black;
+  }
+  </style>
+</head>
+<body>
+<canvas width="375" height="667" id="game"></canvas>
+<script>
+const canvas = document.getElementById('game');
+const context = canvas.getContext('2d')
+
+context.font = "30px Arial";
+context.textAlign = "center";
+context.fillStyle = 'blue';
+
+let barrierX = [54, 107, 160, 213, 1, 54, 213, 266, 54, 213, 1, 54, 107, 160, 213, 266, 54, 107, 213, 160, 213, 107, 160, 1, 54, 213, 266, 54, 213, 107, 160, 1, 266, 1, 266];
+let barrierY = [-1057, -1057, -1057, -1057, -951, -951, -951, -951, -845, -845, -368, -368, -368, -368, -368, -368, -262, -262, -262, -262, -156, -156, -50, -50, -50, -50, 56, 56, 162, 162, 268, 268, 321, 321];
+
+function loop() {
+  requestAnimationFrame(loop);
+  context.clearRect(0,0,canvas.width,canvas.height);
+}
+
+document.addEventListener('mouseup', function(e) {
+  mousedown = false;
+});
+
+document.addEventListener('mousedown', function(e) {
+  mousedown = true;
+});
+
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
