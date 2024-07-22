@@ -93,6 +93,10 @@ function loop() {
   });
   context.drawImage(playerImage, 0, 0, 64, 64, player.x, player.y, 64, 64);
   player.x += velocityX;
+  if (player.x < 0)
+    player.x = 0;
+  if (player.x > canvas.width - 64)
+    player.x = canvas.width - 64;
 }
 
 document.addEventListener('mouseup', function(e) {
