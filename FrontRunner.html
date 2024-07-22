@@ -81,15 +81,18 @@ function loop() {
     if (barrier.activ) {
       context.drawImage(barrierImage, 0, 0, squareSize, squareSize, barrier.x, barrier.y, squareSize, squareSize);
     }
-    barrier.y -= velocityY;
+    if (downWalls[0].y < canvas.height + 150 && downWalls[downWalls.length - 1].y >= canvas.height - wallHeight)
+      barrier.y -= velocityY;
   });
   upWalls.forEach(function(upWall) {
     context.drawImage(wallImage, 0, 0, squareSize, wallHeight, upWall.x, upWall.y, squareSize, wallHeight);
-    upWall.y -= velocityY;
+    if (downWalls[0].y < canvas.height + 150 && downWalls[downWalls.length - 1].y >= canvas.height - wallHeight)
+      upWall.y -= velocityY;
   });
   downWalls.forEach(function(downWall) {
     context.drawImage(wallImage, 0, 0, squareSize, wallHeight, downWall.x, downWall.y, squareSize, wallHeight);
-    downWall.y -= velocityY;
+    if (downWalls[0].y < canvas.height + 150 && downWalls[downWalls.length - 1].y >= canvas.height - wallHeight)
+      downWall.y -= velocityY;
   });
   context.drawImage(playerImage, 0, 0, 64, 64, player.x, player.y, 64, 64);
   player.x += velocityX;
