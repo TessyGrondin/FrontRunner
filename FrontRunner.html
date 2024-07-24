@@ -77,25 +77,32 @@ let directionY = 1;
 function loop() {
   requestAnimationFrame(loop);
   context.clearRect(0,0,canvas.width,canvas.height);
-  barriers.forEach(function(barrier) {
-    if (barrier.activ) {
-      context.drawImage(barrierImage, 0, 0, squareSize, squareSize, barrier.x, barrier.y, squareSize, squareSize);
-    }
-    if (downWalls[0].y < canvas.height + 150 - velocityY && downWalls[downWalls.length - 1].y - velocityY >= canvas.height - wallHeight)
+  if (downWalls[0].y - velocityY < canvas.height + 150 && downWalls[downWalls.length - 1].y - velocityY >= canvas.height - wallHeight) {
+    barriers.forEach(function(barrier) {
       barrier.y -= velocityY;
+    });
+    upWalls.forEach(function(upWall) {
+      upWall.y -= velocityY;
+    });
+    downWalls.forEach(function(downWall) {
+      downWall.y -= velocityY;
+    });
+  }
+  barriers.forEach(function(barrier) {
+    if (barrier.activ)
+      context.drawImage(barrierImage, 0, 0, squareSize, squareSize, barrier.x, barrier.y, squareSize, squareSize);
   });
   upWalls.forEach(function(upWall) {
     context.drawImage(wallImage, 0, 0, squareSize, wallHeight, upWall.x, upWall.y, squareSize, wallHeight);
-    if (downWalls[0].y - velocityY < canvas.height + 150 && downWalls[downWalls.length - 1].y - velocityY >= canvas.height - wallHeight)
-      upWall.y -= velocityY;
   });
   downWalls.forEach(function(downWall) {
     context.drawImage(wallImage, 0, 0, squareSize, wallHeight, downWall.x, downWall.y, squareSize, wallHeight);
-    if (downWalls[0].y - velocityY < canvas.height + 150 && downWalls[downWalls.length - 1].y - velocityY >= canvas.height - wallHeight)
-      downWall.y -= velocityY;
   });
+  context.fillStyle = 'blue';
+  context.fillRect(player.x, player.y, 64, 64);
   context.drawImage(playerImage, 0, 0, 64, 64, player.x, player.y, 64, 64);
-  player.x += velocityX;
+  if (!collisionSide())
+    player.x += velocityX;
   if (player.x < 0)
     player.x = 0;
   if (player.x > canvas.width - 64)
@@ -127,13 +134,13 @@ document.addEventListener('mousedown', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
 
-  barriers.forEach(function(barrier) {
-    if (relativeY < barrier.y || relativeY > barrier.y + squareSize)
-      return;
-    if (relativeX < barrier.x || relativeX > barrier.x + squareSize)
-      return;
-    barrier.activ = false;
-  });
+  // barriers.forEach(function(barrier) {
+  //   if (relativeY < barrier.y || relativeY > barrier.y + squareSize)
+  //     return;
+  //   if (relativeX < barrier.x || relativeX > barrier.x + squareSize)
+  //     return;
+  //   barrier.activ = false;
+  // });
   lastX = relativeX;
   lastY = relativeY;
   mousedown = true;
@@ -148,6 +155,51 @@ function resetVelocity () {
     velocityX -= directionX;
   if (velocityY != 0)
     velocityY -= directionY;
+}
+
+function collideLeft(obstacleX, obstacleY, obstacleHeight) {
+  if (obstacleY > player.y + 64 || player.y > obstacleY + obstacleHeight)
+    return false;
+  if (obstacleX > player.x + 64 || player.x > obstacleX + squareSize)
+    return false;
+  velocityX = 0;
+  player.x = obstacleX + squareSize + 1;
+  return true;
+}
+
+function collideRight(obstacleX, obstacleY, obstacleHeight) {
+  if (obstacleY > player.y + 64 || player.y > obstacleY + obstacleHeight)
+    return false;
+  if (obstacleX > player.x + 64 || player.x > obstacleX + squareSize)
+    return false;
+  velocityX = 0;
+  player.x = obstacleX - 65;
+  return true;
+}
+
+function collisionSide() {
+  if (directionX == 1) {
+    for (let i = 0; i < barriers.length; i++)
+      if (barriers[i].activ && collideRight(barriers[i].x, barriers[i].y, squareSize))
+        return true;
+    for (let i = 0; i < upWalls.length; i++)
+      if (collideRight(upWalls[i].x, upWalls[i].y, wallHeight))
+        return true;
+    for (let i = 0; i < downWalls.length; i++)
+      if (collideRight(downWalls[i].x, downWalls[i].y, wallHeight))
+        return true;
+  } else {
+    for (let i = 0; i < barriers.length; i++)
+      if (barriers[i].activ && collideLeft(barriers[i].x, barriers[i].y, squareSize))
+        return true;
+    for (let i = 0; i < upWalls.length; i++)
+      if (collideLeft(upWalls[i].x, upWalls[i].y, wallHeight))
+        return true;
+    for (let i = 0; i < downWalls.length; i++)
+      if (collideLeft(downWalls[i].x, downWalls[i].y, wallHeight))
+        return true;
+  }
+  return false;
 }
 
 setInterval(resetVelocity, 100);
