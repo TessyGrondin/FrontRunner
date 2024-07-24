@@ -134,13 +134,13 @@ document.addEventListener('mousedown', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
 
-  // barriers.forEach(function(barrier) {
-  //   if (relativeY < barrier.y || relativeY > barrier.y + squareSize)
-  //     return;
-  //   if (relativeX < barrier.x || relativeX > barrier.x + squareSize)
-  //     return;
-  //   barrier.activ = false;
-  // });
+  barriers.forEach(function(barrier) {
+    if (relativeY < barrier.y || relativeY > barrier.y + squareSize)
+      return;
+    if (relativeX < barrier.x || relativeX > barrier.x + squareSize)
+      return;
+    barrier.activ = false;
+  });
   lastX = relativeX;
   lastY = relativeY;
   mousedown = true;
