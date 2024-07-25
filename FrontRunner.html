@@ -74,6 +74,11 @@ let lastY = 0;
 let directionX = 1;
 let directionY = 1;
 
+let left = false;
+let rifgt = false;
+let up = false;
+let down = false;
+
 function loop() {
   requestAnimationFrame(loop);
   context.clearRect(0,0,canvas.width,canvas.height);
@@ -98,7 +103,10 @@ function loop() {
   downWalls.forEach(function(downWall) {
     context.drawImage(wallImage, 0, 0, squareSize, wallHeight, downWall.x, downWall.y, squareSize, wallHeight);
   });
-  context.fillStyle = 'blue';
+  if (left)
+    context.fillStyle = 'blue';
+  else
+    context.fillStyle = 'yellow';
   context.fillRect(player.x, player.y, 64, 64);
   context.drawImage(playerImage, 0, 0, 64, 64, player.x, player.y, 64, 64);
   if (!collisionSide())
@@ -144,6 +152,10 @@ document.addEventListener('mousedown', function(e) {
   lastX = relativeX;
   lastY = relativeY;
   mousedown = true;
+  left = false;
+  right = false;
+  up = false;
+  down = false;
 });
 
 function resetVelocity () {
@@ -157,46 +169,42 @@ function resetVelocity () {
     velocityY -= directionY;
 }
 
-function collideLeft(obstacleX, obstacleY, obstacleHeight) {
+function collide(obstacleX, obstacleY, obstacleHeight) {
   if (obstacleY > player.y + 64 || player.y > obstacleY + obstacleHeight)
     return false;
   if (obstacleX > player.x + 64 || player.x > obstacleX + squareSize)
     return false;
-  velocityX = 0;
-  player.x = obstacleX + squareSize + 1;
-  return true;
-}
-
-function collideRight(obstacleX, obstacleY, obstacleHeight) {
-  if (obstacleY > player.y + 64 || player.y > obstacleY + obstacleHeight)
-    return false;
-  if (obstacleX > player.x + 64 || player.x > obstacleX + squareSize)
-    return false;
-  velocityX = 0;
-  player.x = obstacleX - 65;
+  if (obstacleX + squareSize >= player.x)
+    left = true;
+  if (player.x + 64 >= obstacleX)
+    right = true;
+  if (player.y + 64 >= obstacleY)
+    down = true;
+  if (obstacleY + obstacleHeight >= player.y)
+    top = true;
   return true;
 }
 
 function collisionSide() {
   if (directionX == 1) {
     for (let i = 0; i < barriers.length; i++)
-      if (barriers[i].activ && collideRight(barriers[i].x, barriers[i].y, squareSize))
+      if (barriers[i].activ && collide(barriers[i].x, barriers[i].y, squareSize) && right)
         return true;
     for (let i = 0; i < upWalls.length; i++)
-      if (collideRight(upWalls[i].x, upWalls[i].y, wallHeight))
+      if (collide(upWalls[i].x, upWalls[i].y, wallHeight) && right)
         return true;
     for (let i = 0; i < downWalls.length; i++)
-      if (collideRight(downWalls[i].x, downWalls[i].y, wallHeight))
+      if (collide(downWalls[i].x, downWalls[i].y, wallHeight) && right)
         return true;
   } else {
     for (let i = 0; i < barriers.length; i++)
-      if (barriers[i].activ && collideLeft(barriers[i].x, barriers[i].y, squareSize))
+      if (barriers[i].activ && collide(barriers[i].x, barriers[i].y, squareSize) && left)
         return true;
     for (let i = 0; i < upWalls.length; i++)
-      if (collideLeft(upWalls[i].x, upWalls[i].y, wallHeight))
+      if (collide(upWalls[i].x, upWalls[i].y, wallHeight) && left)
         return true;
     for (let i = 0; i < downWalls.length; i++)
-      if (collideLeft(downWalls[i].x, downWalls[i].y, wallHeight))
+      if (collide(downWalls[i].x, downWalls[i].y, wallHeight) && left)
         return true;
   }
   return false;
