@@ -170,13 +170,15 @@ function resetVelocity () {
 }
 
 function collide(obstacleX, obstacleY, obstacleHeight) {
+  let px = player.x + velocityX;
+
   if (obstacleY > player.y + 64 || player.y > obstacleY + obstacleHeight)
     return false;
-  if (obstacleX > player.x + 64 || player.x > obstacleX + squareSize)
+  if (obstacleX > px + 64 || px > obstacleX + squareSize)
     return false;
-  if (obstacleX + squareSize >= player.x)
+  if (obstacleX + squareSize >= px && obstacleX < px)
     left = true;
-  if (player.x + 64 >= obstacleX)
+  if (obstacleX <= px + 64 && obstacleX + squareSize > px)
     right = true;
   if (player.y + 64 >= obstacleY)
     down = true;
