@@ -79,6 +79,8 @@ let rifgt = false;
 let up = false;
 let down = false;
 
+let time = 0;
+
 function loop() {
   requestAnimationFrame(loop);
   context.clearRect(0,0,canvas.width,canvas.height);
@@ -110,6 +112,11 @@ function loop() {
     player.x = 0;
   if (player.x > canvas.width - squareSize)
     player.x = canvas.width - squareSize;
+  context.fillStyle = 'blue';
+  context.font = "30px Arial";
+  context.fillRect(5, 5, 60, 30)
+  context.fillStyle = 'yellow';
+  context.fillText(time, 35, 30)
 }
 
 document.addEventListener('mouseup', function(e) {
@@ -233,7 +240,13 @@ function collisionFront() {
   return false;
 }
 
+function increment()
+{
+  time++;
+}
+
 setInterval(resetVelocity, 100);
+setInterval(increment, 1000);
 
 requestAnimationFrame(loop);
 </script>
