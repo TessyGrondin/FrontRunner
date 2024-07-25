@@ -156,7 +156,25 @@ document.addEventListener('mousedown', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
 
-  if (!end) {
+  if (end) {
+    for (let i = 0; i < barriers.length; i++) {
+      barriers[i].x = barrierX[i];
+      barriers[i].y = barrierY[i];
+    }
+    for (let i = 0; i < upWalls.length; i++) {
+      upWalls[i].x = upWallX[i];
+      upWalls[i].y = upWallY[i];
+    }
+    for (let i = 0; i < downWalls.length; i++) {
+      downWalls[i].x = downWallX[i];
+      downWalls[i].y = downWallY[i];
+    }
+    time = 0;
+    player.x = canvas.width / 2 - 26;
+    player.y = canvas.height - 53;
+    end = false;
+    return;
+  } else {
     barriers.forEach(function(barrier) {
       if (relativeY < barrier.y || relativeY > barrier.y + squareSize)
         return;
