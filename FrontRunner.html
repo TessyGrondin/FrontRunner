@@ -81,42 +81,54 @@ let down = false;
 
 let time = 0;
 
+let end = false;
+
 function loop() {
   requestAnimationFrame(loop);
   context.clearRect(0,0,canvas.width,canvas.height);
-  if (downWalls[0].y - velocityY < canvas.height + 150 && downWalls[downWalls.length - 1].y - velocityY >= canvas.height - wallHeight && !collisionFront()) {
+  if (!end) {
+    if (downWalls[0].y - velocityY >= canvas.height + 150)
+      end = true;
+    if (downWalls[0].y - velocityY < canvas.height + 150 && downWalls[downWalls.length - 1].y - velocityY >= canvas.height - wallHeight && !collisionFront()) {
+      barriers.forEach(function(barrier) {
+        barrier.y -= velocityY;
+      });
+      upWalls.forEach(function(upWall) {
+        upWall.y -= velocityY;
+      });
+      downWalls.forEach(function(downWall) {
+        downWall.y -= velocityY;
+      });
+    }
     barriers.forEach(function(barrier) {
-      barrier.y -= velocityY;
+      if (barrier.activ)
+        context.drawImage(barrierImage, 0, 0, squareSize, squareSize, barrier.x, barrier.y, squareSize, squareSize);
     });
     upWalls.forEach(function(upWall) {
-      upWall.y -= velocityY;
+      context.drawImage(wallImage, 0, 0, squareSize, wallHeight, upWall.x, upWall.y, squareSize, wallHeight);
     });
     downWalls.forEach(function(downWall) {
-      downWall.y -= velocityY;
+      context.drawImage(wallImage, 0, 0, squareSize, wallHeight, downWall.x, downWall.y, squareSize, wallHeight);
     });
+    context.drawImage(playerImage, 0, 0, squareSize, squareSize, player.x, player.y, squareSize, squareSize);
+    if (!collisionSide())
+      player.x += velocityX;
+    if (player.x < 0)
+      player.x = 0;
+    if (player.x > canvas.width - squareSize)
+      player.x = canvas.width - squareSize;
+    context.fillStyle = 'blue';
+    context.font = "30px Arial";
+    context.fillRect(5, 5, 60, 30)
+    context.fillStyle = 'yellow';
+    context.fillText(time, 35, 30)
+  } else {
+    context.fillStyle = 'blue';
+    context.font = "50px Arial";
+    context.fillText("You took " + time + "s !", canvas.width / 2, canvas.height / 2);
+    context.font = "20px Arial";
+    context.fillText("tap to restart", canvas.width / 2, canvas.height - 10);
   }
-  barriers.forEach(function(barrier) {
-    if (barrier.activ)
-      context.drawImage(barrierImage, 0, 0, squareSize, squareSize, barrier.x, barrier.y, squareSize, squareSize);
-  });
-  upWalls.forEach(function(upWall) {
-    context.drawImage(wallImage, 0, 0, squareSize, wallHeight, upWall.x, upWall.y, squareSize, wallHeight);
-  });
-  downWalls.forEach(function(downWall) {
-    context.drawImage(wallImage, 0, 0, squareSize, wallHeight, downWall.x, downWall.y, squareSize, wallHeight);
-  });
-  context.drawImage(playerImage, 0, 0, squareSize, squareSize, player.x, player.y, squareSize, squareSize);
-  if (!collisionSide())
-    player.x += velocityX;
-  if (player.x < 0)
-    player.x = 0;
-  if (player.x > canvas.width - squareSize)
-    player.x = canvas.width - squareSize;
-  context.fillStyle = 'blue';
-  context.font = "30px Arial";
-  context.fillRect(5, 5, 60, 30)
-  context.fillStyle = 'yellow';
-  context.fillText(time, 35, 30)
 }
 
 document.addEventListener('mouseup', function(e) {
@@ -144,20 +156,22 @@ document.addEventListener('mousedown', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
 
-  barriers.forEach(function(barrier) {
-    if (relativeY < barrier.y || relativeY > barrier.y + squareSize)
-      return;
-    if (relativeX < barrier.x || relativeX > barrier.x + squareSize)
-      return;
-    barrier.activ = false;
-  });
-  lastX = relativeX;
-  lastY = relativeY;
+  if (!end) {
+    barriers.forEach(function(barrier) {
+      if (relativeY < barrier.y || relativeY > barrier.y + squareSize)
+        return;
+      if (relativeX < barrier.x || relativeX > barrier.x + squareSize)
+        return;
+      barrier.activ = false;
+    });
+    lastX = relativeX;
+    lastY = relativeY;
+    left = false;
+    right = false;
+    up = false;
+    down = false;
+  }
   mousedown = true;
-  left = false;
-  right = false;
-  up = false;
-  down = false;
 });
 
 function resetVelocity () {
@@ -242,7 +256,8 @@ function collisionFront() {
 
 function increment()
 {
-  time++;
+  if (!end)
+    time++;
 }
 
 setInterval(resetVelocity, 100);
