@@ -64,8 +64,12 @@ let wallImage = new Image(53, 15);
 wallImage.src = "wall.png";
 let playerImage = new Image(159, 53);
 playerImage.src = "player.png";
+let background = new Image(320, 2500);
+background.src = "background.png";
 
 let player = {x:canvas.width / 2 - 26, y:canvas.height - 53};
+
+let backgroundY = 2500 - canvas.height;
 
 let velocityX = 0;
 let velocityY = 0;
@@ -86,10 +90,12 @@ let end = false;
 function loop() {
   requestAnimationFrame(loop);
   context.clearRect(0,0,canvas.width,canvas.height);
+  context.drawImage(background, 0, backgroundY, 320, 480, 0, 0, canvas.width, canvas.height);
   if (!end) {
     if (downWalls[0].y - velocityY >= canvas.height + 150)
       end = true;
     if (downWalls[0].y - velocityY < canvas.height + 150 && downWalls[downWalls.length - 1].y - velocityY >= canvas.height - wallHeight && !collisionFront()) {
+      backgroundY += velocityY;
       barriers.forEach(function(barrier) {
         barrier.y -= velocityY;
       });
@@ -123,6 +129,7 @@ function loop() {
     context.fillStyle = 'yellow';
     context.fillText(time, 35, 30)
   } else {
+    backgroundY = 2500 - canvas.height;
     context.fillStyle = 'blue';
     context.font = "50px Arial";
     context.fillText("You took " + time + "s !", canvas.width / 2, canvas.height / 2);
@@ -160,6 +167,7 @@ document.addEventListener('mousedown', function(e) {
     for (let i = 0; i < barriers.length; i++) {
       barriers[i].x = barrierX[i];
       barriers[i].y = barrierY[i];
+      barriers[i].activ = true;
     }
     for (let i = 0; i < upWalls.length; i++) {
       upWalls[i].x = upWallX[i];
@@ -172,6 +180,12 @@ document.addEventListener('mousedown', function(e) {
     time = 0;
     player.x = canvas.width / 2 - 26;
     player.y = canvas.height - 53;
+    velocityX = 0;
+    velocityY = 0;
+    lastX = 0;
+    lastY = 0;
+    directionX = 1;
+    directionY = 1;
     end = false;
     return;
   } else {
