@@ -62,10 +62,10 @@ let barrierImage = new Image(53, 53);
 barrierImage.src = "barrier.png";
 let wallImage = new Image(53, 15);
 wallImage.src = "wall.png";
-let playerImage = new Image(448, 64);
+let playerImage = new Image(159, 53);
 playerImage.src = "player.png";
 
-let player = {x:canvas.width / 2 - 32, y:canvas.height - 74};
+let player = {x:canvas.width / 2 - 26, y:canvas.height - 53};
 
 let velocityX = 0;
 let velocityY = 0;
@@ -103,18 +103,13 @@ function loop() {
   downWalls.forEach(function(downWall) {
     context.drawImage(wallImage, 0, 0, squareSize, wallHeight, downWall.x, downWall.y, squareSize, wallHeight);
   });
-  if (left)
-    context.fillStyle = 'blue';
-  else
-    context.fillStyle = 'yellow';
-  context.fillRect(player.x, player.y, 64, 64);
-  context.drawImage(playerImage, 0, 0, 64, 64, player.x, player.y, 64, 64);
+  context.drawImage(playerImage, 0, 0, squareSize, squareSize, player.x, player.y, squareSize, squareSize);
   if (!collisionSide())
     player.x += velocityX;
   if (player.x < 0)
     player.x = 0;
-  if (player.x > canvas.width - 64)
-    player.x = canvas.width - 64;
+  if (player.x > canvas.width - squareSize)
+    player.x = canvas.width - squareSize;
 }
 
 document.addEventListener('mouseup', function(e) {
@@ -173,15 +168,15 @@ function collide(obstacleX, obstacleY, obstacleHeight) {
   let px = player.x + velocityX;
   let oy = obstacleY - velocityY;
 
-  if (obstacleY > player.y + 64 || player.y > obstacleY + obstacleHeight)
+  if (obstacleY > player.y + squareSize || player.y > obstacleY + obstacleHeight)
     return false;
-  if (obstacleX > px + 64 || px > obstacleX + squareSize)
+  if (obstacleX > px + squareSize || px > obstacleX + squareSize)
     return false;
   if (obstacleX + squareSize >= px && obstacleX < px)
     left = true;
-  if (obstacleX <= px + 64 && obstacleX + squareSize > px)
+  if (obstacleX <= px + squareSize && obstacleX + squareSize > px)
     right = true;
-  if (oy <= player.y + 64 && oy + obstacleHeight > player.y)
+  if (oy <= player.y + squareSize && oy + obstacleHeight > player.y)
     down = true;
   if (oy + obstacleHeight >= player.y && oy < player.y)
     up = true;
