@@ -87,12 +87,17 @@ let down = false;
 let time = 0;
 
 let end = false;
+let menu = true;
 
 function loop() {
   requestAnimationFrame(loop);
   context.clearRect(0,0,canvas.width,canvas.height);
   context.drawImage(background, 0, backgroundY, 320, 480, 0, 0, canvas.width, canvas.height);
-  if (!end) {
+  if (menu) {
+    context.fillStyle = 'blue';
+    context.font = "50px Arial";
+    context.fillText("Tap to play", canvas.width / 2, canvas.height / 2);
+  } else if (!end) {
     if (downWalls[0].y - velocityY >= canvas.height + 150)
       end = true;
     if (downWalls[0].y - velocityY < canvas.height + 150 && downWalls[downWalls.length - 1].y - velocityY >= canvas.height - wallHeight && !collisionFront()) {
@@ -164,6 +169,10 @@ document.addEventListener('mousedown', function(e) {
   let relativeX = e.x - canvas.offsetLeft;
   let relativeY = e.y - canvas.offsetTop;
 
+  if (menu) {
+    menu = false;
+    return;
+  }
   if (end) {
     for (let i = 0; i < barriers.length; i++) {
       barriers[i].x = barrierX[i];
@@ -188,7 +197,6 @@ document.addEventListener('mousedown', function(e) {
     directionX = 1;
     directionY = 1;
     end = false;
-    return;
   } else {
     barriers.forEach(function(barrier) {
       if (relativeY < barrier.y || relativeY > barrier.y + squareSize)
