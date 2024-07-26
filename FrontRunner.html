@@ -68,6 +68,7 @@ let background = new Image(320, 2500);
 background.src = "background.png";
 
 let player = {x:canvas.width / 2 - 26, y:canvas.height - 53};
+let playerFrame = 0;
 
 let backgroundY = 2500 - canvas.height;
 
@@ -116,7 +117,7 @@ function loop() {
     downWalls.forEach(function(downWall) {
       context.drawImage(wallImage, 0, 0, squareSize, wallHeight, downWall.x, downWall.y, squareSize, wallHeight);
     });
-    context.drawImage(playerImage, 0, 0, squareSize, squareSize, player.x, player.y, squareSize, squareSize);
+    context.drawImage(playerImage, playerFrame * squareSize, 0, squareSize, squareSize, player.x, player.y, squareSize, squareSize);
     if (!collisionSide())
       player.x += velocityX;
     if (player.x < 0)
@@ -292,8 +293,20 @@ function increment()
     time++;
 }
 
+function animatePlayer() {
+  if (!end) {
+    if (velocityX == 0 && velocityY == 0)
+      playerFrame = 0;
+    else if (playerFrame == 1)
+      playerFrame = 2;
+    else
+      playerFrame = 1;
+  }
+}
+
 setInterval(resetVelocity, 100);
 setInterval(increment, 1000);
+setInterval(animatePlayer, 70);
 
 requestAnimationFrame(loop);
 </script>
