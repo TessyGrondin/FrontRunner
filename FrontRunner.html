@@ -97,6 +97,7 @@ function loop() {
     context.fillStyle = 'blue';
     context.font = "50px Arial";
     context.fillText("Tap to play", canvas.width / 2, canvas.height / 2);
+    context.drawImage(playerImage, playerFrame * squareSize, 0, squareSize, squareSize, player.x, player.y, squareSize, squareSize);
   } else if (!end) {
     if (downWalls[0].y - velocityY >= canvas.height + 150)
       end = true;
@@ -171,6 +172,8 @@ document.addEventListener('mousedown', function(e) {
 
   if (menu) {
     menu = false;
+    lastX = relativeX;
+    lastY = relativeY;
     return;
   }
   if (end) {
@@ -192,8 +195,8 @@ document.addEventListener('mousedown', function(e) {
     player.y = canvas.height - 53;
     velocityX = 0;
     velocityY = 0;
-    lastX = 0;
-    lastY = 0;
+    lastX = relativeX;
+    lastY = relativeY;
     directionX = 1;
     directionY = 1;
     end = false;
